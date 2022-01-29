@@ -10,21 +10,45 @@ function setup(){
 
   space = createSprite(width/2,height/2)
   space.addImage(spaceImg)
-  space.velocityY=-3;
-  space.scale=2.5
+  space.velocityY=+1;
+  space.scale=2.75
   plane = createSprite(100,575);
   plane.addImage(planeImg);
   plane.scale=.5;
+   gameSound=createAudio("assets/gamesounds.wav");
+  gameSound.volume(0.1
+  )
  
-
 }
 
 function draw(){
   background(0)
   plane.x=mouseX
-  if(space.y>height/2-50){
-    space.y=space.height/2+50
+  if(space.y>425){
+    space.y=375
+
   }
+
+  gameSound.play();
+  obstacles()
   drawSprites()
+
+}
+
+function obstacles(){
+  if(frameCount % 80===0){
+  meteor = createSprite(random(0,width),0)
+  meteor.addImage(meteorImg);
+  meteor.velocityY=5;
+  meteor.velocityX=-2;
+  meteor.scale=0.08;
+  }
+  if(frameCount % 100===0){
+    meteor = createSprite(650,random(50,350))
+    meteor.addImage(meteorImg);
+    meteor.velocityY=5;
+    meteor.velocityX=-2;
+    meteor.scale=0.08;
+  }
 
 }
