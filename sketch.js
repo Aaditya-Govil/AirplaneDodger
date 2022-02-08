@@ -8,6 +8,7 @@ function preload() {
 }
 function setup() {
   createCanvas(600, 700);
+  edges = createEdgeSprites();
   gameState = "wait";
   space = createSprite(width / 2, height / 2);
   space.addImage(spaceImg);
@@ -17,7 +18,7 @@ function setup() {
   plane = createSprite(100, 575);
   plane.addImage(planeImg);
   plane.scale = 0.5;
-
+  plane.setCollider("rectangle", 0, 0, 350, 250);
   gameSound = createAudio("assets/gamesounds.wav");
   gameSound.volume(0.1);
 
@@ -41,30 +42,34 @@ function setup() {
     gameTitle.class("gameTitle")
     gameTitle.html("Airplane Dodger")
   }
-  score=0;
+  score = 0;
 }
 
 function draw() {
+
   if (gameState === "play") {
     background(0);
-    text("Score: " + score, 50, 50);
-    textSize(24);
-    score = score + Math.round(getFrameRate()/60);
-    playerName = createElement("h6");
-    playerName.position(10, 0)
-    playerName.class("playerName")
-    playerName.html(input.value());
     hideElements()
     plane.x = mouseX;
     if (space.y > 425) {
       space.y = 375;
     }
-    gameSound.play();
+    if (meteorGroup.isTouching(plane)) {
+      gameState = "end";
+    }
+    //gameSound.play();
     obstacles();
     drawSprites();
   }
-
-
+  if (gameState === "end") {
+    plane.destroy()
+    meteorGroup.destroyEach()
+  }
+  if(gameState!=="wait"){
+  textSize(24);
+  fill("white");
+  text(this.input.value() + ":" + score, 50, 50);
+  }
 }
 
 function obstacles() {
@@ -75,10 +80,13 @@ function obstacles() {
     meteor.velocityX = -2;
     meteor.scale = 0.08;
     meteorGroup.add(meteor);
-    meteor.lifetime = 150;
-    meteorGroup.meteor= createSprite(100,100,width/2-100,height/2+100);
-    meteorGroup.velocityX = -(4+score/1000);
-    
+    if (meteor.isTouching(edges[1])) {
+      score = score + 1
+    }
+
+    meteor.setCollider("circle", 0, 0, 50);
+    meteor.lifetime = 300;
+
 
   }
   if (frameCount % 100 === 0) {
@@ -87,8 +95,14 @@ function obstacles() {
     meteor.velocityY = 5;
     meteor.velocityX = -2;
     meteor.scale = 0.08;
+    console.log(meteor.y);
+    console.log(meteor.lifetime);
     meteorGroup.add(meteor);
-    meteor.lifetime = 150;
+    if (meteor.isTouching(edges[1])) {
+      score = score + 1
+    }
+    meteor.setCollider("circle", -50, 0, 50);
+    meteor.lifetime = 300;
   }
 
 
