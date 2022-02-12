@@ -5,6 +5,7 @@ function preload() {
   spaceImg = loadImage("assets/outerspace.jpg");
   explosionImg = loadImage("assets/Explosion1.gif");
   meteorImg = loadImage("assets/meteor1.gif");
+  gameoverImg = loadImage("assets/GameOver.png");
 }
 function setup() {
   createCanvas(600, 700);
@@ -57,18 +58,21 @@ function draw() {
     if (meteorGroup.isTouching(plane)) {
       gameState = "end";
     }
-    //gameSound.play();
     obstacles();
     drawSprites();
   }
   if (gameState === "end") {
     plane.destroy()
     meteorGroup.destroyEach()
+    imageMode(CENTER);
+    image(gameoverImg, plane.x, plane.y);
+    plane.changeImage("gameoverImg")
+
   }
-  if(gameState!=="wait"){
-  textSize(24);
-  fill("white");
-  text(this.input.value() + ":" + score, 50, 50);
+  if (gameState !== "wait") {
+    textSize(24);
+    fill("white");
+    text(this.input.value() + ":" + score, 50, 50);
   }
 }
 
